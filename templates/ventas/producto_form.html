@@ -1,0 +1,99 @@
+{% extends 'base.html' %}
+
+{% block title %}{{ action }} Producto - Sistema de Ventas{% endblock %}
+
+{% block content %}
+<div class="max-w-3xl mx-auto">
+    <!-- Header -->
+    <div class="mb-6">
+        <a href="{% url 'producto_list' %}" class="text-purple-600 hover:text-purple-800 inline-flex items-center mb-4">
+            <svg class="h-5 w-5 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path>
+            </svg>
+            Volver a Productos
+        </a>
+        <h1 class="text-3xl font-bold text-gray-800">{{ action }} Producto</h1>
+    </div>
+    
+    <!-- Formulario -->
+    <div class="bg-white rounded-lg shadow-md p-6">
+        <form method="post" class="space-y-6">
+            {% csrf_token %}
+            
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <!-- Código -->
+                <div>
+                    <label for="{{ form.codigo.id_for_label }}" class="block text-sm font-medium text-gray-700">
+                        Código <span class="text-red-500">*</span>
+                    </label>
+                    {{ form.codigo }}
+                    {% if form.codigo.errors %}
+                        <p class="mt-1 text-sm text-red-600">{{ form.codigo.errors.0 }}</p>
+                    {% endif %}
+                </div>
+                
+                <!-- Nombre -->
+                <div>
+                    <label for="{{ form.nombre.id_for_label }}" class="block text-sm font-medium text-gray-700">
+                        Nombre <span class="text-red-500">*</span>
+                    </label>
+                    {{ form.nombre }}
+                    {% if form.nombre.errors %}
+                        <p class="mt-1 text-sm text-red-600">{{ form.nombre.errors.0 }}</p>
+                    {% endif %}
+                </div>
+            </div>
+            
+            <!-- Descripción -->
+            <div>
+                <label for="{{ form.descripcion.id_for_label }}" class="block text-sm font-medium text-gray-700">
+                    Descripción <span class="text-red-500">*</span>
+                </label>
+                {{ form.descripcion }}
+                {% if form.descripcion.errors %}
+                    <p class="mt-1 text-sm text-red-600">{{ form.descripcion.errors.0 }}</p>
+                {% endif %}
+            </div>
+            
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <!-- Precio -->
+                <div>
+                    <label for="{{ form.precio.id_for_label }}" class="block text-sm font-medium text-gray-700">
+                        Precio <span class="text-red-500">*</span>
+                    </label>
+                    <div class="mt-1 relative rounded-md shadow-sm">
+                        <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                            <span class="text-gray-500 sm:text-sm">$</span>
+                        </div>
+                        {{ form.precio }}
+                    </div>
+                    {% if form.precio.errors %}
+                        <p class="mt-1 text-sm text-red-600">{{ form.precio.errors.0 }}</p>
+                    {% endif %}
+                </div>
+                
+                <!-- Stock -->
+                <div>
+                    <label for="{{ form.stock.id_for_label }}" class="block text-sm font-medium text-gray-700">
+                        Stock <span class="text-red-500">*</span>
+                    </label>
+                    {{ form.stock }}
+                    {% if form.stock.errors %}
+                        <p class="mt-1 text-sm text-red-600">{{ form.stock.errors.0 }}</p>
+                    {% endif %}
+                </div>
+            </div>
+            
+            <!-- Botones -->
+            <div class="flex justify-end space-x-3 pt-4 border-t">
+                <a href="{% url 'producto_list' %}" class="px-4 py-2 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-purple-500">
+                    Cancelar
+                </a>
+                <button type="submit" class="px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-purple-600 hover:bg-purple-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-purple-500">
+                    {{ action }} Producto
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}
