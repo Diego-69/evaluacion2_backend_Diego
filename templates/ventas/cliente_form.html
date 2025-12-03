@@ -1,0 +1,103 @@
+{% extends 'base.html' %}
+
+{% block title %}{{ action }} Cliente - Sistema de Ventas{% endblock %}
+
+{% block content %}
+<div class="max-w-3xl mx-auto">
+    <!-- Header -->
+    <div class="mb-6">
+        <a href="{% url 'cliente_list' %}" class="text-blue-600 hover:text-blue-800 inline-flex items-center mb-4">
+            <svg class="h-5 w-5 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path>
+            </svg>
+            Volver a Clientes
+        </a>
+        <h1 class="text-3xl font-bold text-gray-800">{{ action }} Cliente</h1>
+    </div>
+    
+    <!-- Formulario -->
+    <div class="bg-white rounded-lg shadow-md p-6">
+        <form method="post" class="space-y-6">
+            {% csrf_token %}
+            
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <!-- RUT -->
+                <div>
+                    <label for="{{ form.rut.id_for_label }}" class="block text-sm font-medium text-gray-700">
+                        RUT <span class="text-red-500">*</span>
+                    </label>
+                    {{ form.rut }}
+                    {% if form.rut.errors %}
+                        <p class="mt-1 text-sm text-red-600">{{ form.rut.errors.0 }}</p>
+                    {% endif %}
+                </div>
+                
+                <!-- Nombre -->
+                <div>
+                    <label for="{{ form.nombre.id_for_label }}" class="block text-sm font-medium text-gray-700">
+                        Nombre <span class="text-red-500">*</span>
+                    </label>
+                    {{ form.nombre }}
+                    {% if form.nombre.errors %}
+                        <p class="mt-1 text-sm text-red-600">{{ form.nombre.errors.0 }}</p>
+                    {% endif %}
+                </div>
+                
+                <!-- Apellido -->
+                <div>
+                    <label for="{{ form.apellido.id_for_label }}" class="block text-sm font-medium text-gray-700">
+                        Apellido <span class="text-red-500">*</span>
+                    </label>
+                    {{ form.apellido }}
+                    {% if form.apellido.errors %}
+                        <p class="mt-1 text-sm text-red-600">{{ form.apellido.errors.0 }}</p>
+                    {% endif %}
+                </div>
+                
+                <!-- Email -->
+                <div>
+                    <label for="{{ form.email.id_for_label }}" class="block text-sm font-medium text-gray-700">
+                        Email <span class="text-red-500">*</span>
+                    </label>
+                    {{ form.email }}
+                    {% if form.email.errors %}
+                        <p class="mt-1 text-sm text-red-600">{{ form.email.errors.0 }}</p>
+                    {% endif %}
+                </div>
+                
+                <!-- Teléfono -->
+                <div class="md:col-span-2">
+                    <label for="{{ form.telefono.id_for_label }}" class="block text-sm font-medium text-gray-700">
+                        Teléfono <span class="text-red-500">*</span>
+                    </label>
+                    {{ form.telefono }}
+                    {% if form.telefono.errors %}
+                        <p class="mt-1 text-sm text-red-600">{{ form.telefono.errors.0 }}</p>
+                    {% endif %}
+                </div>
+            </div>
+            
+            <!-- Dirección -->
+            <div>
+                <label for="{{ form.direccion.id_for_label }}" class="block text-sm font-medium text-gray-700">
+                    Dirección <span class="text-red-500">*</span>
+                </label>
+                {{ form.direccion }}
+                {% if form.direccion.errors %}
+                    <p class="mt-1 text-sm text-red-600">{{ form.direccion.errors.0 }}</p>
+                {% endif %}
+            </div>
+            
+            <!-- Botones -->
+            <div class="flex justify-end space-x-3 pt-4 border-t">
+                <a href="{% url 'cliente_list' %}" class="px-4 py-2 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">
+                    Cancelar
+                </a>
+                <button type="submit" class="px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">
+                    {{ action }} Cliente
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}
