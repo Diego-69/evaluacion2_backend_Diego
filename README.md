@@ -1,9 +1,10 @@
-# Sistema de Gestión de Ventas - Django + Tailwind CSS
+# Sistema de Gestión de Ventas - Django + API REST
 
-Sistema web completo de gestión de ventas desarrollado con Django y Tailwind CSS. Permite administrar clientes, productos, ventas y visualizar reportes con gráficos interactivos.
+Sistema web completo de gestión de ventas desarrollado con Django, Tailwind CSS y API RESTful. Permite administrar clientes, productos, ventas mediante interfaz web tradicional y consumir datos vía API REST con autenticación JWT.
 
 ## 🚀 Características
 
+### Interfaz Web
 - ✅ **CRUD completo** para Clientes, Productos y Ventas
 - 📊 **Dashboard con gráficos** de productos más vendidos y clientes con más compras
 - 🎨 **Diseño moderno** con Tailwind CSS
@@ -11,6 +12,14 @@ Sistema web completo de gestión de ventas desarrollado con Django y Tailwind CS
 - 📱 **Responsive Design** - Compatible con dispositivos móviles
 - 🔄 **Gestión automática de stock** - Se actualiza al realizar ventas
 - 📈 **Gráficos interactivos** con Chart.js
+
+### API RESTful
+- 🔐 **Autenticación JWT** - Tokens seguros para acceso a la API
+- 📡 **Endpoints REST completos** - CRUD para todos los modelos
+- 📚 **Documentación Swagger** - Interfaz interactiva para probar la API
+- 🔒 **Protección de rutas** - Autenticación requerida en endpoints sensibles
+- 📤 **Respuestas JSON** - Formato estándar para integración
+- 🎯 **Endpoints personalizados** - Estadísticas, búsquedas y acciones especiales
 
 ## 📋 Requisitos Previos
 
@@ -129,7 +138,11 @@ eva2_backend/
 
 ## 🎨 Tecnologías Utilizadas
 
-- **Backend**: Django 4.2.7
+- **Backend**: 
+  - Django 4.2.7 - Framework web principal
+  - Django REST Framework 3.16.1 - Framework para API REST
+  - djangorestframework-simplejwt 5.5.1 - Autenticación JWT
+  - drf-yasg 1.21.11 - Documentación Swagger/OpenAPI
 - **Frontend**: 
   - Tailwind CSS (vía CDN) - Framework CSS
   - Chart.js - Biblioteca de gráficos
@@ -174,12 +187,259 @@ eva2_backend/
 - Validación de datos en modelos y formularios
 - Prevención de inyección SQL mediante ORM de Django
 
+## 🌐 API RESTful - Documentación
+
+### Acceder a la Documentación Swagger
+
+Una vez iniciado el servidor, acceda a:
+- **Swagger UI**: http://127.0.0.1:8000/swagger/
+- **ReDoc**: http://127.0.0.1:8000/redoc/
+- **Navegador API**: http://127.0.0.1:8000/api/
+
+### Autenticación con JWT
+
+#### 1. Obtener Token de Acceso
+
+**Endpoint**: `POST /api/auth/login/`
+
+```bash
+curl -X POST http://127.0.0.1:8000/api/auth/login/ \
+  -H "Content-Type: application/json" \
+  -d '{
+    "username": "tu_usuario",
+    "password": "tu_contraseña"
+  }'
+```
+
+**Respuesta**:
+```json
+{
+  "refresh": "eyJ0eXAiOiJKV1QiLCJhbGc...",
+  "access": "eyJ0eXAiOiJKV1QiLCJhbGc..."
+}
+```
+
+#### 2. Usar el Token en las Peticiones
+
+Incluya el token en el header `Authorization`:
+
+```bash
+curl -X GET http://127.0.0.1:8000/api/clientes/ \
+  -H "Authorization: Bearer eyJ0eXAiOiJKV1QiLCJhbGc..."
+```
+
+#### 3. Refrescar Token (cuando expire)
+
+**Endpoint**: `POST /api/auth/refresh/`
+
+```bash
+curl -X POST http://127.0.0.1:8000/api/auth/refresh/ \
+  -H "Content-Type: application/json" \
+  -d '{"refresh": "eyJ0eXAiOiJKV1QiLCJhbGc..."}'
+```
+
+### Endpoints Principales de la API
+
+#### 👥 Clientes
+
+| Método | Endpoint | Descripción |
+|--------|----------|-------------|
+| GET | `/api/clientes/` | Listar todos los clientes |
+| POST | `/api/clientes/` | Crear nuevo cliente |
+| GET | `/api/clientes/{id}/` | Obtener detalle de cliente |
+| PUT | `/api/clientes/{id}/` | Actualizar cliente completo |
+| PATCH | `/api/clientes/{id}/` | Actualizar cliente parcial |
+| DELETE | `/api/clientes/{id}/` | Eliminar cliente |
+| GET | `/api/clientes/{id}/ventas/` | Obtener ventas del cliente |
+| GET | `/api/clientes/buscar_por_rut/?rut=12345678-9` | Buscar cliente por RUT |
+
+**Ejemplo - Crear Cliente**:
+```json
+POST /api/clientes/
+{
+  "rut": "12345678-9",
+  "nombre": "Juan",
+  "apellido": "Pérez",
+  "email": "juan@example.com",
+  "telefono": "+56912345678",
+  "direccion": "Av. Principal 123"
+}
+```
+
+#### 📦 Productos
+
+| Método | Endpoint | Descripción |
+|--------|----------|-------------|
+| GET | `/api/productos/` | Listar todos los productos |
+| POST | `/api/productos/` | Crear nuevo producto |
+| GET | `/api/productos/{id}/` | Obtener detalle de producto |
+| PUT | `/api/productos/{id}/` | Actualizar producto completo |
+| PATCH | `/api/productos/{id}/` | Actualizar producto parcial |
+| DELETE | `/api/productos/{id}/` | Eliminar producto |
+| GET | `/api/productos/sin_stock/` | Productos sin stock |
+| GET | `/api/productos/bajo_stock/?limite=10` | Productos con stock bajo |
+| POST | `/api/productos/{id}/agregar_stock/` | Agregar stock al producto |
+
+**Ejemplo - Crear Producto**:
+```json
+POST /api/productos/
+{
+  "codigo": "PROD001",
+  "nombre": "Laptop Dell",
+  "descripcion": "Laptop Dell Inspiron 15",
+  "precio": 599990,
+  "stock": 10
+}
+```
+
+**Ejemplo - Agregar Stock**:
+```json
+POST /api/productos/1/agregar_stock/
+{
+  "cantidad": 20
+}
+```
+
+#### 💰 Ventas
+
+| Método | Endpoint | Descripción |
+|--------|----------|-------------|
+| GET | `/api/ventas/` | Listar todas las ventas |
+| POST | `/api/ventas/` | Crear nueva venta |
+| GET | `/api/ventas/{id}/` | Obtener detalle de venta |
+| DELETE | `/api/ventas/{id}/` | Eliminar venta (restaura stock) |
+| GET | `/api/ventas/por_cliente/?cliente_id=1` | Ventas de un cliente |
+| GET | `/api/ventas/estadisticas/` | Estadísticas generales |
+
+**Ejemplo - Crear Venta**:
+```json
+POST /api/ventas/
+{
+  "cliente": 1,
+  "observaciones": "Entrega urgente",
+  "detalles": [
+    {
+      "producto": 1,
+      "cantidad": 2,
+      "precio_unitario": 599990
+    },
+    {
+      "producto": 2,
+      "cantidad": 1,
+      "precio_unitario": 299990
+    }
+  ]
+}
+```
+
+**Ejemplo - Estadísticas**:
+```json
+GET /api/ventas/estadisticas/
+
+Respuesta:
+{
+  "total_ventas": 45,
+  "monto_total": 12500000.00,
+  "promedio_venta": 277777.78
+}
+```
+
+#### 👤 Usuario Actual
+
+| Método | Endpoint | Descripción |
+|--------|----------|-------------|
+| GET | `/api/users/me/` | Obtener información del usuario autenticado |
+
+### Paginación
+
+La API utiliza paginación automática con 10 elementos por página:
+
+```
+GET /api/clientes/?page=2
+```
+
+### Filtros y Búsqueda
+
+Muchos endpoints soportan parámetros de búsqueda:
+
+```
+GET /api/productos/?search=laptop
+GET /api/clientes/?ordering=-fecha_registro
+```
+
+### Códigos de Estado HTTP
+
+- `200 OK` - Petición exitosa
+- `201 Created` - Recurso creado exitosamente
+- `204 No Content` - Recurso eliminado exitosamente
+- `400 Bad Request` - Error en la petición
+- `401 Unauthorized` - No autenticado
+- `403 Forbidden` - Sin permisos
+- `404 Not Found` - Recurso no encontrado
+- `500 Internal Server Error` - Error del servidor
+
+### Ejemplo Completo - Crear Venta con Python
+
+```python
+import requests
+
+# 1. Obtener token
+login_url = "http://127.0.0.1:8000/api/auth/login/"
+login_data = {
+    "username": "admin",
+    "password": "admin123"
+}
+response = requests.post(login_url, json=login_data)
+token = response.json()["access"]
+
+# 2. Crear venta
+headers = {"Authorization": f"Bearer {token}"}
+venta_url = "http://127.0.0.1:8000/api/ventas/"
+venta_data = {
+    "cliente": 1,
+    "observaciones": "Venta desde API",
+    "detalles": [
+        {
+            "producto": 1,
+            "cantidad": 2,
+            "precio_unitario": 599990
+        }
+    ]
+}
+response = requests.post(venta_url, json=venta_data, headers=headers)
+print(response.json())
+```
+
+### Ejemplo Completo - Listar Clientes con JavaScript
+
+```javascript
+// 1. Obtener token
+const loginResponse = await fetch('http://127.0.0.1:8000/api/auth/login/', {
+  method: 'POST',
+  headers: {'Content-Type': 'application/json'},
+  body: JSON.stringify({
+    username: 'admin',
+    password: 'admin123'
+  })
+});
+const { access } = await loginResponse.json();
+
+// 2. Listar clientes
+const clientesResponse = await fetch('http://127.0.0.1:8000/api/clientes/', {
+  headers: {'Authorization': `Bearer ${access}`}
+});
+const clientes = await clientesResponse.json();
+console.log(clientes);
+```
+
 ## 📝 Notas Importantes
 
-- La aplicación **no requiere autenticación** para las vistas principales (según requisitos)
+- La interfaz web **no requiere autenticación** (según requisitos originales)
+- La **API REST requiere autenticación JWT** para todos los endpoints
 - El stock se gestiona automáticamente al crear/eliminar ventas
 - Los subtotales y totales se calculan automáticamente
 - Los gráficos se generan dinámicamente con datos en tiempo real
+- Los tokens JWT tienen una duración de 5 horas
 
 ## 🐛 Solución de Problemas
 
